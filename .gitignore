@@ -1,6 +1,4 @@
 /vendor
 /.idea
-/log
-/temp
 /config/gitlab-config.neon
 /composer.lock
