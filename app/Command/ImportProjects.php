@@ -36,8 +36,9 @@ class ImportProjects extends Command
 		$groupId = 10975505;
 		$groupArray = [];
 		$groupType = $this->gitLabApi->getGroupById($groupId);
-		$arraySubGroup = $this->gitLabApi->getGroupsRecursive($groupType);
-		foreach( $arraySubGroup as $subGroup){
+		$arraySubGroup[] = $groupType;
+		$this->gitLabApi->getGroupsRecursive($groupType, $arraySubGroup);
+		foreach($arraySubGroup as $subGroup){
 			$groupArray[$subGroup->getId()] = $subGroup;
 		}
 
@@ -58,7 +59,7 @@ class ImportProjects extends Command
 				if(!isset($userArray[$userType->getId()])){
 					$userArray[$userType->getId()] = $userType;
 				}
-				$userType->addProject($userProject);
+				$userArray[$userType->getId()]->addProject($userProject);
 			}
 		}
 
@@ -69,7 +70,7 @@ class ImportProjects extends Command
 				if(!isset($userArray[$userType->getId()])){
 					$userArray[$userType->getId()] = $userType;
 				}
-				$userType->addGroup($userGroup);
+				$userArray[$userType->getId()]->addGroup($userGroup);
 			}
 		}
 
@@ -77,6 +78,8 @@ class ImportProjects extends Command
 			$this->outputUser($output, $user);
 			$output->writeln('');
 		}
+
+		$output->writeln('Total users: '.count($userArray));
 
 		return self::SUCCESS;
 	}
@@ -88,12 +91,12 @@ class ImportProjects extends Command
 		$arrayGroupString = array_map(function(UserGroup $userGroup){
 			return sprintf('%s (%s)', $userGroup->getGroup()->getFullPath(), $userGroup->getAccessLevelTranslated());
 		}, $user->getGroups());
-		$output->writeln(sprintf('Groups: [%s]', implode($arrayGroupString)));
+		$output->writeln(sprintf('Groups: [%s]', implode(', ', $arrayGroupString)));
 
 		$arrayProjectString = array_map(function(UserProject $userGroup){
 			return sprintf('%s (%s)', $userGroup->getProject()->getPathWithNamespace(), $userGroup->getAccessLevelTranslated());
 		}, $user->getProjects());
-		$output->writeln(sprintf('Projects: [%s]', implode($arrayProjectString)));
+		$output->writeln(sprintf('Projects: [%s]', implode(', ', $arrayProjectString)));
 	}
 
 
