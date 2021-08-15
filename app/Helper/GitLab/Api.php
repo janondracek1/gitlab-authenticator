@@ -18,9 +18,10 @@ use Tracy\Debugger;
 class Api
 {
     public const LOG_SEVERITY = 'api';
+    public const ENTRIES_PER_PAGE = 50;
 
     protected Client $client;
-    protected $defaultParams = [];
+    protected array $defaultParams = [];
 
     /**
      * ImportProjects constructor.
@@ -46,8 +47,8 @@ class Api
     {
         try {
             return json_decode(
-                $this->client->request($method, $url, array_merge($this->defaultParams, $additionalParams))->getBody(
-                )->getContents(),
+                $this->client->request($method, $url, array_merge($this->defaultParams, $additionalParams))->getBody()
+                    ->getContents(),
                 true
             );
         } catch (RequestException $ex) {
@@ -102,14 +103,26 @@ class Api
      * @return Group[]
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getGroupsRecursive(Group $group, array &$groupArray = []): array
+    public function getGroupsRecursive(Group $group, array &$groupArray = [], int $pageNumber = 1): array
     {
-        $arrayResponse = $this->sendRequest('GET', 'groups/' . $group->getId() . '/subgroups');
-        foreach ($arrayResponse as $subGroup) {
-            $subGroupType = new Group($subGroup);
-            $groupArray[] = $subGroupType;
-            $this->getGroupsRecursive($subGroupType, $groupArray);
-        }
+        do {
+            $url = sprintf(
+                'groups/%s/subgroups?per_page=%s&page=%s',
+                $group->getId(),
+                self::ENTRIES_PER_PAGE,
+                $pageNumber
+            );
+            $arrayResponse = $this->sendRequest('GET', $url);
+
+            foreach ($arrayResponse as $subGroup) {
+                $subGroupType = new Group($subGroup);
+                $groupArray[] = $subGroupType;
+                $this->getGroupsRecursive($subGroupType, $groupArray);
+            }
+
+            $pageNumber++;
+        } while (!empty($arrayResponse));
+
         return $groupArray;
     }
 
@@ -118,13 +131,21 @@ class Api
      * @return Project[]
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getProjectsOfGroup(Group $group): array
+    public function getProjectsOfGroup(Group $group, int $pageNumber = 1): array
     {
-        $arrayResponse = $this->sendRequest('GET', 'groups/' . $group->getId() . '/projects');
         $return = [];
-        foreach ($arrayResponse as $project) {
-            $return[] = new Project($project);
-        }
+        do {
+            $url = sprintf(
+                'groups/%s/projects?per_page=%s&page=%s',
+                $group->getId(), self::ENTRIES_PER_PAGE,
+                $pageNumber
+            );
+            $arrayResponse = $this->sendRequest('GET', $url);
+            foreach ($arrayResponse as $project) {
+                $return[] = new Project($project);
+            }
+            $pageNumber++;
+        } while (!empty($arrayResponse));
         return $return;
     }
 
