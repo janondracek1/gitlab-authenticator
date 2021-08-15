@@ -21,5 +21,10 @@
             "name": "janondracek1",
             "email": "jan.ondracek1@gmail.com"
         }
-    ]
+    ],
+    "config": {
+        "platform": {
+            "php": "8.0"
+        }
+    }
 }
