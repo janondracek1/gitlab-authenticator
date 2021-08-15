@@ -87,9 +87,10 @@ class Api
 	 * @return Group[]
 	 * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
-	public function getDescendantGroupsOfGroup(Group $group): array
+	public function getGroupsRecursive( Group $group): array
 	{
-		$arrayResponse = $this->sendRequest('GET', 'groups/'.$group->getId().'/descendant_groups');
+		//TODO: implement recursive getting
+		$arrayResponse = $this->sendRequest('GET', 'groups/'.$group->getId().'/subgroups');
 		$return = [];
 		foreach($arrayResponse as $descendantGroup){
 			$return[] = new Group($descendantGroup);

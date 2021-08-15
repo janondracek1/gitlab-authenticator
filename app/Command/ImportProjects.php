@@ -36,7 +36,7 @@ class ImportProjects extends Command
 		$groupId = 10975505;
 		$groupArray = [];
 		$groupType = $this->gitLabApi->getGroupById($groupId);
-		$arraySubGroup = $this->gitLabApi->getDescendantGroupsOfGroup($groupType);
+		$arraySubGroup = $this->gitLabApi->getGroupsRecursive($groupType);
 		foreach( $arraySubGroup as $subGroup){
 			$groupArray[$subGroup->getId()] = $subGroup;
 		}
