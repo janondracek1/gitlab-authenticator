@@ -2,3 +2,4 @@
 /.idea
 /log
 /temp
+/config/gitlab-config.neon

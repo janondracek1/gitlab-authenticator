@@ -23,6 +23,7 @@ class Bootstrap
 			->register();
 		$configurator->addConfig($appDir . '/config/common.neon');
 		$configurator->addConfig($appDir . '/config/services.neon');
+		$configurator->addConfig($appDir . '/config/gitlab-config.neon');
 		return $configurator;
 	}
 

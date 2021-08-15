@@ -1,7 +1,2 @@
 extensions:
 	console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
-
-parameters:
-    gitLabApi:
-        url: https://gitlab.example.com/api/v4/
-        accessToken: naRAbrD8qPXaXVASQ8Zy
