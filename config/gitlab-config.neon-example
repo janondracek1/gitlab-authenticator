@@ -1,4 +1,4 @@
 parameters:
     gitLabApi:
-        url:
+        url: https://gitlab.com/api/v4/
         accessToken:

@@ -48,6 +48,7 @@ class User extends BaseType
     public function addProject(UserProject $project): self
     {
         $this->projects[] = $project;
+
         return $this;
     }
 
@@ -62,6 +63,7 @@ class User extends BaseType
     public function addGroup(UserGroup $group): self
     {
         $this->groups[] = $group;
+
         return $this;
     }
 

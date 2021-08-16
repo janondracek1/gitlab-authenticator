@@ -45,20 +45,21 @@ class ImportProjects extends Command
         $groupArray = [];
         $groupType = $this->gitLabApi->getGroupById($groupId);
         if (!$groupType instanceof Group) {
-            $output->writeln("Group with ID $groupId not found");
+            $output->writeln('Group with ID '.$groupId.' not found, check /log/'.Api::LOG_SEVERITY.'.log for further information');
+
             return self::FAILURE;
         }
         $arraySubGroup[] = $groupType;
         $this->gitLabApi->getGroupsRecursive($groupType, $arraySubGroup);
         foreach ($arraySubGroup as $subGroup) {
-            $groupArray[ $subGroup->getId() ] = $subGroup;
+            $groupArray[$subGroup->getId()] = $subGroup;
         }
 
         $projectArray = [];
         foreach ($groupArray as $group) {
             $groupProjectArray = $this->gitLabApi->getProjectsOfGroup($group);
             foreach ($groupProjectArray as $project) {
-                $projectArray[ $project->getId() ] = $project;
+                $projectArray[$project->getId()] = $project;
             }
         }
 
@@ -68,10 +69,10 @@ class ImportProjects extends Command
             $userProjectArray = $this->gitLabApi->getMembersOfProject($project);
             foreach ($userProjectArray as $userProject) {
                 $userType = $userProject->getUser();
-                if (!isset($userArray[ $userType->getId() ])) {
-                    $userArray[ $userType->getId() ] = $userType;
+                if (!isset($userArray[$userType->getId()])) {
+                    $userArray[$userType->getId()] = $userType;
                 }
-                $userArray[ $userType->getId() ]->addProject($userProject);
+                $userArray[$userType->getId()]->addProject($userProject);
             }
         }
 
@@ -79,10 +80,10 @@ class ImportProjects extends Command
             $userGroupArray = $this->gitLabApi->getMembersOfGroup($group);
             foreach ($userGroupArray as $userGroup) {
                 $userType = $userGroup->getUser();
-                if (!isset($userArray[ $userType->getId() ])) {
-                    $userArray[ $userType->getId() ] = $userType;
+                if (!isset($userArray[$userType->getId()])) {
+                    $userArray[$userType->getId()] = $userType;
                 }
-                $userArray[ $userType->getId() ]->addGroup($userGroup);
+                $userArray[$userType->getId()]->addGroup($userGroup);
             }
         }
 
@@ -102,7 +103,9 @@ class ImportProjects extends Command
 
         $arrayGroupString = array_map(function (UserGroup $userGroup) {
             return sprintf('%s (%s)', $userGroup->getGroup()->getFullPath(), $userGroup->getAccessLevelTranslated());
-        }, $user->getGroups());
+        },
+            $user->getGroups()
+        );
         $output->writeln(sprintf('Groups: [%s]', implode(', ', $arrayGroupString)));
 
         $arrayProjectString = array_map(function (UserProject $userGroup) {
@@ -111,7 +114,9 @@ class ImportProjects extends Command
                 $userGroup->getProject()->getPathWithNamespace(),
                 $userGroup->getAccessLevelTranslated()
             );
-        }, $user->getProjects());
+        },
+            $user->getProjects()
+        );
         $output->writeln(sprintf('Projects: [%s]', implode(', ', $arrayProjectString)));
     }
 

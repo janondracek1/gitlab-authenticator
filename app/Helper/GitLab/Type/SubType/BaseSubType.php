@@ -39,7 +39,7 @@ abstract class BaseSubType extends BaseType
 
     public function getAccessLevelTranslated(): string
     {
-        return self::ACCESS_LEVEL_TRANSLATION_MAP[ $this->accessLevel ];
+        return self::ACCESS_LEVEL_TRANSLATION_MAP[$this->accessLevel];
     }
 
 }

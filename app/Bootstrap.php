@@ -15,7 +15,7 @@ class Bootstrap
         $appDir = dirname(__DIR__);
         $configurator = new Configurator;
         $configurator->setDebugMode(
-            php_sapi_name() === 'cli' || Helpers::ipMatch($_SERVER[ 'REMOTE_ADDR' ], '127.0.0.1/8')
+            php_sapi_name() === 'cli' || Helpers::ipMatch($_SERVER['REMOTE_ADDR'], '127.0.0.1/8')
         );
         $configurator->enableTracy($appDir . '/log');
         $configurator->setTempDirectory($appDir . '/temp');
@@ -25,6 +25,7 @@ class Bootstrap
         $configurator->addConfig($appDir . '/config/common.neon');
         $configurator->addConfig($appDir . '/config/services.neon');
         $configurator->addConfig($appDir . '/config/gitlab-config.neon');
+
         return $configurator;
     }
 
